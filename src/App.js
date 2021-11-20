@@ -7,7 +7,7 @@ import Header from "./components/header/header.component";
 import HomePage from "./pages/homepage/homepage.component";
 import ShopPage from "./pages/shop/shop.component";
 import SignInUpPage from "./pages/sign-in-and-sign-up/sign-in-up.component";
-import { auth, createUserProfileDoc } from "./firebase/firebase.utils";
+import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 
 const HatsPage = () => (
   <div>
@@ -29,20 +29,16 @@ class App extends React.Component {
   componentDidMount() {
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
-        const userRef = await createUserProfileDoc(userAuth);
+        const userRef = await createUserProfileDocument(userAuth);
 
         userRef.onSnapshot((snapShot) => {
-          this.setState(
-            {
-              currentUser: {
-                id: snapShot.id,
-                ...snapShot.data(),
-              },
+          this.setState({
+            currentUser: {
+              id: snapShot.id,
+              ...snapShot.data(),
             },
-            () => {
-              console.log(this.state);
-            }
-          );
+          });
+          console.log(this.state);
         });
       }
       this.setState({ currentUser: userAuth });
@@ -56,7 +52,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Header currentUser={this.state.currenUser} />
+        <Header currentUser={this.state.currentUser} />
         <Switch>
           <Route exact path="/" component={HomePage}></Route>
           <Route exact path="/hats" component={HatsPage}></Route>
